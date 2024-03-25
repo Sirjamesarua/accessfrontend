@@ -8,9 +8,8 @@ export default function DefaultLayout() {
         e.preventDefault();
         try {
             putToken("");
-        } catch (error) {
-            alert(error);
-            throw error
+        } catch (err) {
+            console.log(err);
         }
     }
 

@@ -4,11 +4,13 @@ import DefaultLayout from "./layouts/DefaultLayout";
 
 import Login from "./pages/Login";
 import Home, { loader as HomeLoader } from "./pages/Home"
+import ErrorPage from "./pages/Error";
 
 const router = createBrowserRouter([
     {
         path: '/',
         element: <AuthLayout />,
+        errorElement: <ErrorPage />,
         children: [
             {
                 index: true,
@@ -20,6 +22,7 @@ const router = createBrowserRouter([
     {
         path: '/home',
         element: <DefaultLayout />,
+        errorElement: <ErrorPage />,
         children: [
             {
                 index: true,

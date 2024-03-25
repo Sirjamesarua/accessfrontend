@@ -15,6 +15,7 @@ axiosClient.interceptors.response.use((response) => { return response }, (error)
         const { response } = error;
         if (response.status === 401) {
             localStorage.removeItem('ptxr_t');
+            window.location.href = "/";
         }
     } catch (error) {
         console.log(error);
