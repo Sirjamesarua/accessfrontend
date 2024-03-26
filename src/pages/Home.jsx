@@ -74,7 +74,7 @@ export default function Home() {
                                 {...register('email')} onKeyUp={inputCount}
                             ></textarea>
                         </div>
-                        <button className="btn btn-dark rounded-0 w-100 text-uppercase">
+                        <button className="btn btn-dark rounded-0 w-100 text-uppercase" disabled={isSubmitting}>
                             {isSubmitting ? (<span className="loading-text">Verifying...</span>) : "Verify"}
                         </button>
                     </form>
