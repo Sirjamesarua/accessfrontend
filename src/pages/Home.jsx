@@ -6,13 +6,16 @@ import { useLoaderData } from 'react-router-dom';
 export async function loader() {
     const { data } = await axiosClient.get("/get");
     const emailCount = data;
-    console.log(emailCount);
+    // console.log(emailCount);
     return { emailCount };
 }
 
 export default function Home() {
     const { register, handleSubmit, formState: { isSubmitting } } = useForm();
+
     const [result, setResult] = useState(null);
+    const [inputTotal, setInputTotal] = useState('');
+    const [count, setCount] = useState(0);
 
     const { emailCount } = useLoaderData();
 
@@ -27,6 +30,21 @@ export default function Home() {
             .catch((err) => {
                 console.log(err);
             });
+    }
+
+    const inputCount = (e) => {
+        setInputTotal(e.target.value);
+        let trimmedItems = inputTotal.split(",");
+
+        trimmedItems.forEach(function (item) {
+            item.trim();
+            if (item === '') {
+                setCount(trimmedItems.length - 1);
+                return;
+            } else {
+                setCount(trimmedItems.length);
+            }
+        })
     }
 
     return (
@@ -45,14 +63,18 @@ export default function Home() {
                         Emails must be separeted my commas ","
                     </p>
 
+                    <p className='text-secondary m-0'>
+                        {count} emails entered.
+                    </p>
+
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="mb-4">
                             <textarea id="data" cols="30" rows="10" placeholder='first@mail.com, second@mail.com'
                                 className='form-control shadow-sm border border-dark rounded-0 fst-italic fw-semibold'
-                                {...register('email')}
+                                {...register('email')} onKeyUp={inputCount}
                             ></textarea>
                         </div>
-                        <button className="btn btn-dark rounded-0 w-100 text-uppercase">
+                        <button className="btn btn-dark rounded-0 w-100 text-uppercase" disabled={isSubmitting}>
                             {isSubmitting ? (<span className="loading-text">Verifying...</span>) : "Verify"}
                         </button>
                     </form>
@@ -88,3 +110,8 @@ export default function Home() {
         </>
     )
 }
+
+/*
+ernest@gmail.com, ernest@gmail.com, ernest@gmail.com, ernest@gmail.com, ernest@gmail.com, ernest@gmail.com, ernest@gmail.com, 
+
+*/
