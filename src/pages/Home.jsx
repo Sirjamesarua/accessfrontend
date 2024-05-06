@@ -14,20 +14,27 @@ export default function Home() {
 
     const [result, setResult] = useState(null);
     const [inputTotal, setInputTotal] = useState('');
+    const [isRetrying, setIsRetrying] = useState(false);
     const [count, setCount] = useState(0);
 
     const { emailCount } = useLoaderData();
 
+    var retries = 0;
     const onSubmit = async (data) => {
+        setIsRetrying(true);
         console.log(data);
         await axiosClient.post(`/submit_email`, data, { timeout: 7200000 })
             .then((data) => {
                 setResult(data.data);
+                setIsRetrying(false);
             })
             .catch((err) => {
                 console.log("EmailMonster; " + err);
+                console.log(`Retrying... (${retries + 1})`);
+                onSubmit(data);
             });
     }
+
 
     const inputCount = (e) => {
         setInputTotal(e.target.value);
@@ -71,8 +78,8 @@ export default function Home() {
                                 {...register('email')} onKeyUp={inputCount}
                             ></textarea>
                         </div>
-                        <button className="btn btn-dark rounded-0 w-100 text-uppercase" disabled={isSubmitting}>
-                            {isSubmitting ? (<span className="loading-text">Verifying...</span>) : "Verify"}
+                        <button className="btn btn-dark rounded-0 w-100 text-uppercase" disabled={isRetrying}>
+                            {isRetrying ? (<span className="loading-text">Verifying...</span>) : "Verify"}
                         </button>
                     </form>
 
