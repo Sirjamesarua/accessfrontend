@@ -6,7 +6,6 @@ import { useLoaderData } from 'react-router-dom';
 export async function loader() {
     const { data } = await axiosClient.get("/get");
     const emailCount = data;
-    // console.log(emailCount);
     return { emailCount };
 }
 
@@ -21,14 +20,12 @@ export default function Home() {
 
     const onSubmit = async (data) => {
         console.log(data);
-        // return;
-        await axiosClient.post(`/submit_email`, data)
+        await axiosClient.post(`/submit_email`, data, { timeout: 7200000 })
             .then((data) => {
-                console.log(data.data);
                 setResult(data.data);
             })
             .catch((err) => {
-                console.log(err);
+                console.log("EmailMonster; " + err);
             });
     }
 
@@ -110,8 +107,3 @@ export default function Home() {
         </>
     )
 }
-
-/*
-ernest@gmail.com, ernest@gmail.com, ernest@gmail.com, ernest@gmail.com, ernest@gmail.com, ernest@gmail.com, ernest@gmail.com, 
-
-*/
