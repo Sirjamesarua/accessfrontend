@@ -20,10 +20,10 @@ export default function Home() {
     const { emailCount } = useLoaderData();
 
     var retries = 0;
-    const onSubmit = async (data) => {
+    const onSubmit = (data) => {
         setIsRetrying(true);
         console.log(data);
-        await axiosClient.post(`/submit_email`, data, { timeout: 7200000 })
+        axiosClient.post(`/submit_email`, data, { timeout: 7200000 })
             .then((data) => {
                 setResult(data.data);
                 setIsRetrying(false);
