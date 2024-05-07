@@ -31,8 +31,8 @@ export default function Home() {
             .catch((err) => {
                 console.log("EmailMonster; " + err);
                 console.log(`Retrying... (${retries + 1})`);
-                if(result){
-                    onSubmit(data);
+                if(result === null){
+                onSubmit(data);
                 }
             });
     }
