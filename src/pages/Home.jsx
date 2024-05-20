@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { set, useForm } from 'react-hook-form'
 import axiosClient from '../interceptors/axios-client';
 import { useLoaderData } from 'react-router-dom';
 
@@ -16,13 +16,14 @@ export default function Home() {
     const [inputTotal, setInputTotal] = useState('');
     const [isRetrying, setIsRetrying] = useState(false);
     const [count, setCount] = useState(0);
+    const [btnValue, setBtnValue] = useState('Verify');
 
     const { emailCount } = useLoaderData();
 
     var retries = 0;
     const onSubmit = (data) => {
-        setIsRetrying(true);
         console.log(data);
+        setIsRetrying(true);
         axiosClient.post(`/submit_email`, data, { timeout: 7200000 })
             .then((data) => {
                 setResult(data.data);
@@ -31,8 +32,8 @@ export default function Home() {
             .catch((err) => {
                 console.log("EmailMonster; " + err);
                 console.log(`Retrying... (${retries + 1})`);
-                if(result === null){
-                onSubmit(data);
+                if (result === null) {
+                    onSubmit(data);
                 }
             });
     }
@@ -74,14 +75,23 @@ export default function Home() {
                     </p>
 
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className="mb-4">
+                        <div className="mb-3">
                             <textarea id="data" cols="30" rows="10" placeholder='first@mail.com, second@mail.com'
                                 className='form-control shadow-sm border border-dark rounded-0 fst-italic fw-semibold'
                                 {...register('email')} onKeyUp={inputCount}
                             ></textarea>
                         </div>
+
+                        <div className="form-check mb-3">
+                            <input {...register('gmail_only')} className="form-check-input" type="checkbox" value="" id="is_gmail"
+                                onChange={e => e.target.checked ? setBtnValue('Verify Gmail only') : setBtnValue("Verify")} />
+                            <label className="form-check-label" htmlFor="is_gmail">
+                                @gmail.com <b>only</b>
+                            </label>
+                        </div>
+
                         <button className="btn btn-dark rounded-0 w-100 text-uppercase" disabled={isRetrying}>
-                            {isRetrying ? (<span className="loading-text">Verifying...</span>) : "Verify"}
+                            {isRetrying ? (<span className="loading-text">Verifying...</span>) : btnValue}
                         </button>
                     </form>
 
@@ -99,8 +109,19 @@ export default function Home() {
                             <h2 className='fs-6'>
                                 Unverified emails
                             </h2>
+
                             <ol>
                                 {result.notVerified.length > 0 ? result.notVerified.map((email, index) =>
+                                    <li key={index}>{email}, </li>
+                                ) : 'no verified emails'}
+                            </ol>
+                            
+                            <h2 className='fs-6'>
+                                 wrongFormat emails
+                            </h2>
+
+                            <ol>
+                                {result.wrongFormat?.length > 0 ? result.wrongFormat?.map((email, index) =>
                                     <li key={index}>{email}, </li>
                                 ) : 'no verified emails'}
                             </ol>
@@ -108,9 +129,19 @@ export default function Home() {
                             <h2 className='fs-6'>
                                 Verified emails: {result.verifiedEmails.length}
                             </h2>
+
+                            {result.notGmail?.length > 0 && (
+                                <h2 className='fs-6'>
+                                    Not gmail emails: {result.notGmail?.length}
+                                </h2>
+                            )}
+                            {result.message && (
+                                <h2 className='fs-6 bg-danger-subtle text-danger p-2 d-inline-block rounded'>
+                                    Message: {result.message}
+                                </h2>
+                            )}
                         </div>
                     }
-
                 </div >
             </div >
         </>
